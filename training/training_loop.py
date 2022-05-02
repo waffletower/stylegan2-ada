@@ -1,4 +1,5 @@
-﻿# Copyright (c) 2020, NVIDIA CORPORATION.  All rights reserved.
+﻿
+# Copyright (c) 2020, NVIDIA CORPORATION.  All rights reserved.
 #
 # NVIDIA CORPORATION and its licensors retain all intellectual property
 # and proprietary rights in and to this software, related documentation
@@ -74,7 +75,7 @@ def save_image_grid(images, filename, drange, grid_size):
     images = images.reshape(gh, gw, C, H, W)
     images = images.transpose(0, 3, 1, 4, 2)
     images = images.reshape(gh * H, gw * W, C)
-    PIL.Image.fromarray(images, {3: 'RGB', 1: 'L'}[C]).save(filename)
+    PIL.Image.fromarray(images, mode="L").save(filename)
 
 #----------------------------------------------------------------------------
 # Main training script.
@@ -178,7 +179,7 @@ def training_loop(
                 real_images_var = tf.Variable(name='images', trainable=False, initial_value=tf.zeros([minibatch_gpu] + training_set.shape))
                 real_labels_var = tf.Variable(name='labels', trainable=False, initial_value=tf.zeros([minibatch_gpu, training_set.label_size]))
                 real_images_write, real_labels_write = training_set.get_minibatch_tf()
-                real_images_write = tflib.convert_images_from_uint8(real_images_write)
+                real_images_write = tflib.convert_images_from_float32(real_images_write)
                 data_fetch_ops += [tf.assign(real_images_var, real_images_write)]
                 data_fetch_ops += [tf.assign(real_labels_var, real_labels_write)]
 

@@ -34,16 +34,16 @@ def generate_images(network_pkl, seeds, truncation_psi, outdir, class_idx, dlate
         print(f'Generating images from dlatents file "{dlatents_npz}"')
         dlatents = np.load(dlatents_npz)['dlatents']
         assert dlatents.shape[1:] == (18, 512) # [N, 18, 512]
-        imgs = Gs.components.synthesis.run(dlatents, output_transform=dict(func=tflib.convert_images_to_uint8, nchw_to_nhwc=True))
+        imgs = Gs.components.synthesis.run(dlatents, output_transform=dict(func=tflib.convert_images_to_float32, nchw_to_nhwc=True))
         for i, img in enumerate(imgs):
-            fname = f'{outdir}/dlatent{i:02d}.png'
+            fname = f'{outdir}/dlatent{i:02d}.tiff'
             print (f'Saved {fname}')
             PIL.Image.fromarray(img, 'RGB').save(fname)
         return
 
     # Render images for dlatents initialized from random seeds.
     Gs_kwargs = {
-        'output_transform': dict(func=tflib.convert_images_to_uint8, nchw_to_nhwc=True),
+        'output_transform': dict(func=tflib.convert_images_to_float32, nchw_to_nhwc=True),
         'randomize_noise': False
     }
     if truncation_psi is not None:
@@ -60,7 +60,7 @@ def generate_images(network_pkl, seeds, truncation_psi, outdir, class_idx, dlate
         z = rnd.randn(1, *Gs.input_shape[1:]) # [minibatch, component]
         tflib.set_vars({var: rnd.randn(*var.shape.as_list()) for var in noise_vars}) # [height, width]
         images = Gs.run(z, label, **Gs_kwargs) # [minibatch, height, width, channel]
-        PIL.Image.fromarray(images[0], 'RGB').save(f'{outdir}/seed{seed:04d}.png')
+        PIL.Image.fromarray(images[0], 'RGB').save(f'{outdir}/seed{seed:04d}.tiff')
 
 #----------------------------------------------------------------------------
 
