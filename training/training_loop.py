@@ -1,4 +1,5 @@
-﻿# Copyright (c) 2020, NVIDIA CORPORATION.  All rights reserved.
+﻿
+# Copyright (c) 2020, NVIDIA CORPORATION.  All rights reserved.
 #
 # NVIDIA CORPORATION and its licensors retain all intellectual property
 # and proprietary rights in and to this software, related documentation
@@ -74,7 +75,7 @@ def save_image_grid(images, filename, drange, grid_size):
     images = images.reshape(gh, gw, C, H, W)
     images = images.transpose(0, 3, 1, 4, 2)
     images = images.reshape(gh * H, gw * W, C)
-    PIL.Image.fromarray(images, {3: 'RGB', 1: 'L'}[C]).save(filename)
+    PIL.Image.fromarray(images, mode="L").save(filename)
 
 #----------------------------------------------------------------------------
 # Main training script.
