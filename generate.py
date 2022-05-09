@@ -58,6 +58,7 @@ def generate_images(network_pkl, seeds, truncation_psi, outdir, class_idx, dlate
         print('Generating image for seed %d (%d/%d) ...' % (seed, seed_idx, len(seeds)))
         rnd = np.random.RandomState(seed)
         z = rnd.randn(1, *Gs.input_shape[1:]) # [minibatch, component]
+        print('z: %s' % z)
         tflib.set_vars({var: rnd.randn(*var.shape.as_list()) for var in noise_vars}) # [height, width]
         images = Gs.run(z, label, **Gs_kwargs) # [minibatch, height, width, channel]
         PIL.Image.fromarray(images[0,:,:,0], 'F').save(f'{outdir}/seed{seed:04d}.tiff')
