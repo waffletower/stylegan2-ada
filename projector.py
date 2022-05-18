@@ -103,7 +103,8 @@ class Projector:
         self._images_uint8_expr = tflib.convert_images_to_uint8(self._images_float_expr, nchw_to_nhwc=True)
 
         # Downsample image to 256x256 if it's larger than that. VGG was built for 224x224 images.
-        proc_images_expr = (self._images_float_expr + 1) * (255 / 2)
+#        proc_images_expr = (self._images_float_expr + 1) * (255 / 2)
+        proc_images_expr = (self._images_float_expr + 1)
         sh = proc_images_expr.shape.as_list()
         if sh[2] > 256:
             factor = sh[2] // 256
@@ -145,7 +146,8 @@ class Projector:
         # Prepare target images.
         self._info('Preparing target images...')
         target_images = np.asarray(target_images, dtype='float32')
-        target_images = (target_images + 1) * (255 / 2)
+# remove scaling for now, believe it is to counter 8bit scaling
+#        target_images = (target_images + 1) * (255 / 2)
         sh = target_images.shape
         assert sh[0] == self._minibatch_size
         if sh[2] > self._target_images_var.shape[2]:
@@ -214,10 +216,11 @@ def project(network_pkl: str, target_fname: str, outdir: str, save_video: bool, 
     w, h = target_pil.size
     s = min(w, h)
     target_pil = target_pil.crop(((w - s) // 2, (h - s) // 2, (w + s) // 2, (h + s) // 2))
-    target_pil= target_pil.convert('RGB')
+    target_pil= target_pil.convert('F')
     target_pil = target_pil.resize((Gs.output_shape[3], Gs.output_shape[2]), PIL.Image.ANTIALIAS)
-    target_uint8 = np.array(target_pil, dtype=np.uint8)
-    target_float = target_uint8.astype(np.float32).transpose([2, 0, 1]) * (2 / 255) - 1
+#    target_uint8 = np.array(target_pil, dtype=np.uint8)
+#    target_float = target_uint8.astype(np.float32).transpose([2, 0, 1]) * (2 / 255) - 1
+    target_float = np.array(target_pil, dtype=np.float32)
 
     # Initialize projector.
     proj = Projector()
