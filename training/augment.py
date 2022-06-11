@@ -426,6 +426,7 @@ def augment_pipeline(
         images = tf.nn.depthwise_conv2d_backprop_input(input_sizes=shape, filter=Hz[:, np.newaxis], out_backprop=images, strides=[1,1,1,1], padding='SAME', data_format='NHWC')
         G_inv = scale_2d(2, 2) @ G_inv @ scale_2d_inv(2, 2) # Account for the increased resolution.
 
+# for tf 2.0 -- see tensorflow_addons for equivalent of tf.contrib.image.transform
         # Execute transformation.
         transforms = tf.reshape(G_inv, [-1, 9])[:, :8]
         shape = [(height + Hz_pad * 2) * 2, (width + Hz_pad * 2) * 2]
