@@ -401,7 +401,7 @@ def G_synthesis(
 
     # Main block for one resolution.
     def block(x, res): # res = 3..resolution_log2
-        x = tf.cast(x, 'float16' if res > resolution_log2 - num_fp16_res else dtype)
+        x = tf.cast(x, 'float32' if res > resolution_log2 - num_fp16_res else dtype)
         t = x
         with tf.variable_scope('Conv0_up'):
             x = layer(x, layer_idx=res*2-5, fmaps=nf(res-1), kernel=3, up=True)
@@ -553,7 +553,7 @@ def D_main(
     def fromrgb(x, y, res): # res = 2..resolution_log2
         with tf.variable_scope('FromRGB'):
             trainable = is_next_layer_trainable()
-            t = tf.cast(y, 'float16' if res > resolution_log2 - num_fp16_res else dtype)
+            t = tf.cast(y, 'float32' if res > resolution_log2 - num_fp16_res else dtype)
             t = adrop(conv2d_layer(t, fmaps=nf(res-1), kernel=1, trainable=trainable))
             if pagan_bits is not None:
                 with tf.variable_scope('PAGAN'):
@@ -565,7 +565,7 @@ def D_main(
 
     # Main block for one resolution.
     def block(x, res): # res = 2..resolution_log2
-        x = tf.cast(x, 'float16' if res > resolution_log2 - num_fp16_res else dtype)
+        x = tf.cast(x, 'float32' if res > resolution_log2 - num_fp16_res else dtype)
         t = x
         with tf.variable_scope('Conv0'):
             trainable = is_next_layer_trainable()

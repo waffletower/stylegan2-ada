@@ -192,7 +192,7 @@ def setup_training_options(
     args.G_smoothing_kimg = spec.ema
     args.G_smoothing_rampup = spec.ramp
     args.G_args.mapping_layers = spec.map
-    args.G_args.num_fp16_res = args.D_args.num_fp16_res = 4 # enable mixed-precision training
+    args.G_args.num_fp16_res = args.D_args.num_fp16_res = 0 # enable mixed-precision training
     args.G_args.conv_clamp = args.D_args.conv_clamp = 256 # clamp activations to avoid float16 overflow
 
     if cfg == 'cifar':
