@@ -229,7 +229,7 @@ def project(network_pkl: str, target_fname: str, outdir: str, save_video: bool, 
 
     # Setup output directory.
     os.makedirs(outdir, exist_ok=True)
-    target_pil.save(f'{outdir}/target.png')
+    target_pil.save(f'{outdir}/target.tiff')
     writer = None
     if save_video:
         writer = imageio.get_writer(f'{outdir}/proj.mp4', mode='I', fps=60, codec='libx264', bitrate='16M')
@@ -239,12 +239,12 @@ def project(network_pkl: str, target_fname: str, outdir: str, save_video: bool, 
         for step in t:
             assert step == proj.cur_step
             if writer is not None:
-                writer.append_data(np.concatenate([target_uint8, proj.images_uint8[0]], axis=1))
+                writer.append_data(np.concatenate([target_float, proj.images_float[0]], axis=1))
             dist, loss = proj.step()
             t.set_postfix(dist=f'{dist[0]:.4f}', loss=f'{loss:.2f}')
 
     # Save results.
-    PIL.Image.fromarray(proj.images_uint8[0], 'RGB').save(f'{outdir}/proj.png')
+    PIL.Image.fromarray(proj.images_float[0], 'F').save(f'{outdir}/proj.tiff')
     np.savez(f'{outdir}/dlatents.npz', dlatents=proj.dlatents)
     if writer is not None:
         writer.close()
